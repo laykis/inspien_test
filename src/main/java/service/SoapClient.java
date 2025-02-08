@@ -28,6 +28,11 @@ public class SoapClient {
             // 서비스 호출
             response = client.getRecruitingTestService(name, phoneNumber, email);
 
+            System.out.println(response.getFTPCONNINFO().getHOST());
+            System.out.println(response.getFTPCONNINFO().getPORT());
+            System.out.println(response.getFTPCONNINFO().getUSER());
+            System.out.println(response.getFTPCONNINFO().getPASSWORD());
+
             return response;
 
         } catch (Exception e) {

@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import constant.Const;
 
 import static util.TimeUtil.getFileNameFormatTime;
 
@@ -21,11 +22,13 @@ public class JsonUtil {
         JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
         JsonArray recordArray = jsonObject.getAsJsonArray("record");
 
+
         // 파일 경로와 이름 설정
         File file = new File(fileName);
 
-        // 파일 쓰기
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+
+        // EUC-KR로 인코딩 후 파일 쓰기
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Const.EUC_KR))) {
             for (int i = 0; i < recordArray.size(); i++) {
                 JsonObject record = recordArray.get(i).getAsJsonObject();
 
@@ -48,11 +51,11 @@ public class JsonUtil {
                 String line = String.join("^", names, phone, email, birthDate, company, personalNumber,
                         organisationNumber, country, region, city, street, String.valueOf(zipCode),
                         String.valueOf(creditCard), guid);
+
                 writer.write(line);
                 writer.newLine();  // 줄바꿈
             }
 
-            file.setReadable(true, false);
 
         } catch (IOException e) {
             e.printStackTrace();
