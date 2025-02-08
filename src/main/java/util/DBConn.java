@@ -1,12 +1,16 @@
 package util;
 
 import com.example.generated.MTRecruitingTestServicesResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConn {
+
+    private final static Logger logger = LoggerFactory.getLogger(DBConn.class);
 
     public static Connection getConnection(MTRecruitingTestServicesResponse.DBCONNINFO info) throws ClassNotFoundException {
 
@@ -26,7 +30,8 @@ public class DBConn {
             conn = DriverManager.getConnection(jdbcUrl, user, password);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error("Error while connecting to Oracle DB", e);
+            logger.error(e.getMessage());
         }
 
         return conn;

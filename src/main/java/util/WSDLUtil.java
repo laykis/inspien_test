@@ -1,5 +1,8 @@
 package util;
 
+
+import constant.Const;
+
 import javax.wsdl.Definition;
 import javax.wsdl.Port;
 import javax.wsdl.Service;
@@ -8,12 +11,12 @@ import javax.wsdl.xml.WSDLReader;
 import java.io.File;
 import java.util.Map;
 
-import static constant.Const.WSDL_SERVICE_TYPE;
-
 public class WSDLUtil {
 
 
     public static String getServiceUrlFromWSDL(File wsdlFile, String serviceNameToFind) throws Exception {
+
+
         // WSDL 파서 초기화
         WSDLFactory factory = WSDLFactory.newInstance();
         WSDLReader reader = factory.newWSDLReader();
@@ -43,7 +46,7 @@ public class WSDLUtil {
         for (Object obj : service.getPorts().values()) {
             Port port = (Port) obj;
 
-            if(port.getName().equals(WSDL_SERVICE_TYPE)){
+            if(port.getName().equals(Const.WSDL_SERVICE_TYPE)){
                 // SOAP 바인딩 확인 후 주소 추출
                 for (Object extElement : port.getExtensibilityElements()) {
                     if (extElement instanceof javax.wsdl.extensions.soap.SOAPAddress) {

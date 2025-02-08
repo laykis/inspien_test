@@ -1,6 +1,11 @@
 package service;
 
+
 import com.example.generated.MTRecruitingTestServicesResponse;
+import entity.Test.Test;
+import entity.Test.TestDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -12,81 +17,154 @@ import util.XmlUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class DBService {
 
-    public static void insertDb(MTRecruitingTestServicesResponse response) throws Exception {
+    private static final Logger logger = LoggerFactory.getLogger(DBService.class);
+
+    public static void insertDb(MTRecruitingTestServicesResponse response){
+
+        try{
+
+            List<Test> insertDatas = murgeData(response);
+
+            if(insertDatas.isEmpty()){
+                // 빈 리스트가 처리되어야 할 경우
+                logger.info("DBService.insertDb : no Data inserted");
+                return;
+            }
+
+            Connection conn = DBConn.getConnection(response.getDBCONNINFO());
+
+            if(conn == null){
+                throw new RuntimeException("DBService.insertDb : No connection found");
+            }
+            conn.setAutoCommit(false);
+
+            String sql = "INSERT INTO TEST "
+                    + "(ORDER_NUM, ORDER_ID, ORDER_DATE, ORDER_PRICE, ORDER_QTY, RECEIVER_NAME, "
+                    + "RECEIVER_NO, ETA_DATE, DESTINATION, DESCIPTION, ITEM_SEQ, ITEM_NAME, ITEM_QTY, ITEM_COLOR, ITEM_PRICE, SENDER, CURRENT_DT) "
+                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+
+            for(Test t : insertDatas){
+
+                if(t.getOrderNum().isBlank()){
+                    continue;
+                }
+
+                pstmt.setString(1, t.getOrderNum());
+                pstmt.setString(2, t.getOrderId());
+                pstmt.setString(3, t.getOrderDate());
+                pstmt.setString(4, t.getOrderPrice());
+                pstmt.setString(5, t.getOrderQty());
+                pstmt.setString(6, t.getReceiverName());
+                pstmt.setString(7, t.getReceiverNo());
+                pstmt.setString(8, t.getEtaDate());
+                pstmt.setString(9, t.getDestination());
+                pstmt.setString(10, t.getDescription());
+                pstmt.setString(11, t.getItemSeq());
+                pstmt.setString(12, t.getItemName());
+                pstmt.setString(13, t.getItemQty());
+                pstmt.setString(14, t.getItemColor());
+                pstmt.setString(15, t.getItemPrice());
+                pstmt.setString(16, t.getSender());
+                pstmt.setTimestamp(17, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+
+                pstmt.addBatch();
+            }
+
+            pstmt.executeBatch();
+
+            conn.commit();
+
+            pstmt.close();
+            conn.close();
+
+        }catch (Exception e){
+            logger.error("DBService.insertDb : Error in inserting database", e);
+            logger.error(e.getMessage());
+        }
+    }
+
+    public static List<Test> murgeData(MTRecruitingTestServicesResponse response) throws Exception {
 
         try{
             String decodedXml = Decoder.decodeXml(response.getXMLDATA());
 
-            Connection conn = DBConn.getConnection(response.getDBCONNINFO());
+            List<Test> rtnList = new ArrayList<>();
 
             Document doc = XmlUtil.parseXml(decodedXml);
 
-            conn.setAutoCommit(false);
+            NodeList headers = doc.getDocumentElement().getElementsByTagName("HEADER");
 
-            NodeList headers = doc.getElementsByTagName("HEADER");
-            String headerSQL = "INSERT INTO TEST "
-                    + "(ORDER_NUM, ORDER_ID, ORDER_DATE, ORDER_PRICE, ORDER_QTY, RECEIVER_NAME, "
-                    + "RECEIVER_NO, ETA_DATE, DESTINATION, DESCIPTION, CURRENT_DT) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement headerStatement = conn.prepareStatement(headerSQL);
+            HashMap<String, TestDto> map = new HashMap<>();
 
-            for (int i = 0; i < headers.getLength(); i++) {
+            for(int i = 0; i < headers.getLength(); i++){
                 Node header = headers.item(i);
-                if(header.getNodeType() == Node.ELEMENT_NODE) {
+
+                if (header.getNodeType() == Node.ELEMENT_NODE) {
                     Element headerElement = (Element) header;
 
-                    headerStatement.setString(1, headerElement.getAttribute("ORDER_NUM"));
-                    headerStatement.setString(2, headerElement.getElementsByTagName("ORDER_ID").item(0).getTextContent());
-                    headerStatement.setString(3, headerElement.getElementsByTagName("ORDER_DATE").item(0).getTextContent());
-                    headerStatement.setString(4, headerElement.getElementsByTagName("ORDER_PRICE").item(0).getTextContent());
-                    headerStatement.setString(5, headerElement.getElementsByTagName("ORDER_QTY").item(0).getTextContent());
-                    headerStatement.setString(6, headerElement.getElementsByTagName("RECEIVER_NAME").item(0).getTextContent());
-                    headerStatement.setString(7, headerElement.getElementsByTagName("RECEIVER_NO").item(0).getTextContent());
-                    headerStatement.setString(8, headerElement.getElementsByTagName("ETA_DATE").item(0).getTextContent());
-                    headerStatement.setString(9, headerElement.getElementsByTagName("DESTINATION").item(0).getTextContent());
-                    headerStatement.setString(10, headerElement.getElementsByTagName("DESCIPTION").item(0).getTextContent());
-                    headerStatement.setTimestamp(11, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+                    String orderNum = getTextOrBlank(headerElement, "ORDER_NUM");
 
-                    headerStatement.addBatch();
+                    TestDto t = map.getOrDefault(orderNum, new TestDto());
+                    t.setOrderNum(orderNum);
+                    t.setOrderId(getTextOrBlank(headerElement, "ORDER_ID"));
+                    t.setOrderDate(getTextOrBlank(headerElement, "ORDER_DATE"));
+                    t.setOrderPrice(getTextOrBlank(headerElement, "ORDER_PRICE"));
+                    t.setOrderQty(getTextOrBlank(headerElement, "ORDER_QTY"));
+                    t.setReceiverName(getTextOrBlank(headerElement, "RECEIVER_NAME"));
+                    t.setReceiverNo(getTextOrBlank(headerElement, "RECEIVER_NO"));
+                    t.setEtaDate(getTextOrBlank(headerElement, "ETA_DATE"));
+                    t.setDestination(getTextOrBlank(headerElement, "DESTINATION"));
+                    t.setDescription(getTextOrBlank(headerElement, "DESCRIPTION"));
+
+                    map.put(orderNum, t);
+                }
+
+            }
+
+            NodeList details = doc.getDocumentElement().getElementsByTagName("DETAIL");
+
+            for(int j = 0; j<details.getLength(); j++){
+
+                Node detail = details.item(j);
+
+                if(detail.getNodeType() == Node.ELEMENT_NODE){
+                    Element detailElement = (Element) detail;
+
+                    String orderNum = getTextOrBlank(detailElement, "ORDER_NUM");
+
+                    TestDto t = map.getOrDefault(orderNum, new TestDto());
+                    t.setItemSeq(getTextOrBlank(detailElement,"ITEM_SEQ"));
+                    t.setItemName(getTextOrBlank(detailElement,"ITEM_NAME"));
+                    t.setItemQty(getTextOrBlank(detailElement,"ITEM_QTY"));
+                    t.setItemColor(getTextOrBlank(detailElement,"ITEM_COLOR"));
+                    t.setItemPrice(getTextOrBlank(detailElement,"ITEM_PRICE"));
+                    t.setSender(getTextOrBlank(detailElement,"SENDER"));
+
+                    rtnList.add(t.dtoToEntity());
                 }
             }
 
-            NodeList details = doc.getElementsByTagName("DETAIL");
-            String detailSQL = "INSERT INTO TEST "
-                    + "(ORDER_NUM, ITEM_SEQ, ITEM_NAME, ITEM_QTY, ITEM_COLOR, ITEM_PRICE, CURRENT_DT) "
-                    + "VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement detailStatement = conn.prepareStatement(detailSQL);
+            return rtnList;
 
-            for(int i = 0; i < details.getLength(); i++) {
-                Node detailNode = details.item(i);
-                if (detailNode.getNodeType() == Node.ELEMENT_NODE) {
-                    Element detailElement = (Element) detailNode;
-
-                    detailStatement.setInt(1, Integer.parseInt(detailElement.getElementsByTagName("ORDER_NUM").item(0).getTextContent()));
-                    detailStatement.setInt(2, Integer.parseInt(detailElement.getElementsByTagName("ITEM_SEQ").item(0).getTextContent()));
-                    detailStatement.setString(3, detailElement.getElementsByTagName("ITEM_NAME").item(0).getTextContent());
-                    detailStatement.setInt(4, Integer.parseInt(detailElement.getElementsByTagName("ITEM_QTY").item(0).getTextContent()));
-                    detailStatement.setString(5, detailElement.getElementsByTagName("ITEM_COLOR").item(0).getTextContent());
-                    detailStatement.setInt(6, Integer.parseInt(detailElement.getElementsByTagName("ITEM_PRICE").item(0).getTextContent()));
-                    detailStatement.setTimestamp(7, java.sql.Timestamp.valueOf(LocalDateTime.now()));
-
-                    detailStatement.addBatch();  // 배치 추가
-                }
-            }
-
-            headerStatement.executeBatch();
-            detailStatement.executeBatch();
-
-            conn.commit();
-            conn.close();
-
-        }catch (Exception e){
-            e.printStackTrace();
+        } catch (Exception e) {
+            logger.error("DBService.murgeData : Error in setting xml data", e);
+            return new ArrayList<>(); // 예외 발생 시 빈 리스트 반환
         }
+    }
 
-
+    // 태그의 텍스트 내용을 가져오되, 해당 태그가 없을 경우 null 반환
+    private static String getTextOrBlank(Element element, String tagName) {
+        NodeList nodes = element.getElementsByTagName(tagName);
+        if (nodes.getLength() > 0 && nodes.item(0) != null) {
+            return nodes.item(0).getTextContent();
+        }
+        return "";
     }
 }

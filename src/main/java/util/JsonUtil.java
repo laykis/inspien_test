@@ -1,20 +1,17 @@
 package util;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
-
-import com.example.generated.MTRecruitingTestServicesResponse;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import constant.Const;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static util.TimeUtil.getFileNameFormatTime;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 public class JsonUtil {
+
+    private static final Logger logger = LoggerFactory.getLogger(JsonUtil.class);
 
     public static void saveJsonToFile(String fileName, String jsonData) throws IOException {
         // JSON 파싱
@@ -22,13 +19,12 @@ public class JsonUtil {
         JsonObject jsonObject = gson.fromJson(jsonData, JsonObject.class);
         JsonArray recordArray = jsonObject.getAsJsonArray("record");
 
-
         // 파일 경로와 이름 설정
         File file = new File(fileName);
 
 
-        // EUC-KR로 인코딩 후 파일 쓰기
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Const.EUC_KR))) {
+        // UTF-8 파일 쓰기
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8))) {
             for (int i = 0; i < recordArray.size(); i++) {
                 JsonObject record = recordArray.get(i).getAsJsonObject();
 
@@ -58,7 +54,8 @@ public class JsonUtil {
 
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error while saving json to file", e);
+            logger.error(e.getMessage());
         }
 
     }

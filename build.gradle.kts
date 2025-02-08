@@ -40,6 +40,11 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
     implementation("com.fasterxml.jackson.core:jackson-core:2.18.2")
 
+    //slf4j
+    implementation("org.slf4j:slf4j-api:2.0.16")
+    //logback
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+
 
 
 }

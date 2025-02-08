@@ -1,0 +1,26 @@
+<configuration>
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 기본 로그 파일 경로 -->
+        <file>logs/application.log</file>
+
+        <!-- 파일이 롤링될 때 이름을 지정하는 정책 -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- 로그 파일명에 날짜를 포함 -->
+            <fileNamePattern>logs/application-%d{yyyy-MM-dd}.log</fileNamePattern>
+
+            <!-- 로그 파일을 최대 30일 동안 유지 -->
+            <maxHistory>30</maxHistory>
+
+            <!-- 압축 설정 (옵션) -->
+            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="ROLLING"/>
+    </root>
+</configuration>
