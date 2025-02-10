@@ -12,3 +12,16 @@
 2025-02-10 10:26:43 [main] INFO  service.FTPService - FTPService uploadFileToFtp : FTP server connected.
 2025-02-10 10:26:43 [main] INFO  service.FTPService - FTPService uploadFileToFtp : encodedUtf8FileName: INSPIEN_JSON_ê¹ëí_20250210102643.txt
 2025-02-10 10:26:43 [main] INFO  service.FTPService - FTPService uploadFileToFtp : upload success
+2025-02-10 10:59:02 [main] INFO  service.SoapClient - 20250210105902 Starting SoapClient to get response
+2025-02-10 11:00:18 [main] INFO  service.SoapClient - 20250210110018 Starting SoapClient to get response
+2025-02-10 11:00:49 [main] INFO  service.SoapClient - 20250210110049 Starting SoapClient to get response
+2025-02-10 11:00:51 [main] INFO  service.FTPService - FTPService uploadJsonToFtp : encodedUtf8FileName: /Users/laykis/IdeaProjects/inspien_test/inspien/src/main/resources/ftpFile/INSPIEN_JSON_김도현_20250210110051.txt
+2025-02-10 11:00:51 [main] INFO  service.FTPService - FTPService uploadFileToFtp : FTP server connected.
+2025-02-10 11:00:51 [main] INFO  service.FTPService - FTPService uploadFileToFtp : encodedUtf8FileName: INSPIEN_JSON_ê¹ëí_20250210110051.txt
+2025-02-10 11:00:51 [main] INFO  service.FTPService - FTPService uploadFileToFtp : upload success
+2025-02-10 12:44:16 [main] INFO  service.SoapClient - 20250210124416 Starting SoapClient to get response
+2025-02-10 12:44:40 [main] INFO  service.SoapClient - 20250210124440 Starting SoapClient to get response
+2025-02-10 12:44:42 [main] INFO  service.FTPService - FTPService uploadJsonToFtp : encodedUtf8FileName: /Users/laykis/IdeaProjects/inspien_test/inspien/src/main/resources/ftpFile/INSPIEN_JSON_김도현_20250210124442.txt
+2025-02-10 12:44:42 [main] INFO  service.FTPService - FTPService uploadFileToFtp : FTP server connected.
+2025-02-10 12:44:42 [main] INFO  service.FTPService - FTPService uploadFileToFtp : encodedUtf8FileName: INSPIEN_JSON_ê¹ëí_20250210124442.txt
+2025-02-10 12:44:42 [main] INFO  service.FTPService - FTPService uploadFileToFtp : upload success

@@ -13,6 +13,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import util.DBConn;
 import util.Decoder;
+import util.TimeUtil;
 import util.XmlUtil;
 
 import java.sql.Connection;
@@ -77,7 +78,7 @@ public class DBService {
                 pstmt.setString(14, t.getItemColor());
                 pstmt.setString(15, t.getItemPrice());
                 pstmt.setString(16, t.getSender());
-                pstmt.setTimestamp(17, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+                pstmt.setTimestamp(17, TimeUtil.getTimestamp());
 
                 pstmt.addBatch();
             }
