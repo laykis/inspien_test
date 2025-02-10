@@ -1,0 +1,9 @@
+2025-02-10 10:15:31 [main] INFO  service.SoapClient - 20250210101531 Starting SoapClient to get response
+2025-02-10 10:17:43 [main] INFO  service.SoapClient - 20250210101743 Starting SoapClient to get response
+2025-02-10 10:19:01 [main] INFO  service.SoapClient - 20250210101901 Starting SoapClient to get response
+2025-02-10 10:19:22 [main] INFO  service.SoapClient - 20250210101922 Starting SoapClient to get response
+2025-02-10 10:19:59 [main] INFO  service.SoapClient - 20250210101959 Starting SoapClient to get response
+2025-02-10 10:20:00 [main] INFO  service.FTPService - FTPService uploadJsonToFtp : encodedUtf8FileName: /Users/laykis/IdeaProjects/inspien_test/inspien/src/main/resources/ftpFile/INSPIEN_JSON_김도현_20250210102000.txt
+2025-02-10 10:20:01 [main] INFO  service.FTPService - FTPService uploadFileToFtp : FTP server connected.
+2025-02-10 10:20:01 [main] INFO  service.FTPService - FTPService uploadFileToFtp : encodedUtf8FileName: INSPIEN_JSON_ê¹ëí_20250210102000.txt
+2025-02-10 10:20:01 [main] INFO  service.FTPService - FTPService uploadFileToFtp : upload success

@@ -31,6 +31,10 @@ public class DBService {
 
             List<Test> insertDatas = murgeData(response);
 
+            for(Test test : insertDatas){
+                System.out.println(test.getSender());
+            }
+
             if(insertDatas.isEmpty()){
                 // 빈 리스트가 처리되어야 할 경우
                 logger.info("DBService.insertDb : no Data inserted");
@@ -121,7 +125,7 @@ public class DBService {
                     t.setReceiverNo(getTextOrBlank(headerElement, "RECEIVER_NO"));
                     t.setEtaDate(getTextOrBlank(headerElement, "ETA_DATE"));
                     t.setDestination(getTextOrBlank(headerElement, "DESTINATION"));
-                    t.setDescription(getTextOrBlank(headerElement, "DESCRIPTION"));
+                    t.setDescription(getTextOrBlank(headerElement, "DESCIPTION"));
 
                     map.put(orderNum, t);
                 }
@@ -145,7 +149,7 @@ public class DBService {
                     t.setItemQty(getTextOrBlank(detailElement,"ITEM_QTY"));
                     t.setItemColor(getTextOrBlank(detailElement,"ITEM_COLOR"));
                     t.setItemPrice(getTextOrBlank(detailElement,"ITEM_PRICE"));
-                    t.setSender(getTextOrBlank(detailElement,"SENDER"));
+                    t.setSender("김도현");
 
                     rtnList.add(t.dtoToEntity());
                 }
