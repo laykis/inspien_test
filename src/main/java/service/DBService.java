@@ -2,6 +2,7 @@ package service;
 
 
 import com.example.generated.MTRecruitingTestServicesResponse;
+import constant.Const;
 import entity.Test.Test;
 import entity.Test.TestDto;
 import org.slf4j.Logger;
@@ -149,7 +150,7 @@ public class DBService {
                     t.setItemQty(getTextOrBlank(detailElement,"ITEM_QTY"));
                     t.setItemColor(getTextOrBlank(detailElement,"ITEM_COLOR"));
                     t.setItemPrice(getTextOrBlank(detailElement,"ITEM_PRICE"));
-                    t.setSender("김도현");
+                    t.setSender(Const.INPUT_NAME);
 
                     rtnList.add(t.dtoToEntity());
                 }

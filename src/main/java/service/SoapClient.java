@@ -28,9 +28,9 @@ public class SoapClient {
             SoapClient client = new SoapClient();
 
             // 요청 데이터 설정
-            String name = "김도현";
-            String phoneNumber = "010-7470-6471";
-            String email = "flash6471@naver.com";
+            String name = Const.INPUT_NAME;
+            String phoneNumber = Const.INPUT_NUMBER;
+            String email = Const.INPUT_EMAIL;
 
             // 서비스 호출
             response = client.getRecruitingTestService(name, phoneNumber, email);
